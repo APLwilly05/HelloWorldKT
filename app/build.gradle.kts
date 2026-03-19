@@ -1,9 +1,26 @@
+import java.util.Properties
+
+
+val keystoreProps = Properties().also { props ->
+    file("keystore.properties").let {
+        if (it.exists()) props.load(it.inputStream())
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            storeFile = file(keystoreProps["storeFile"].toString())
+            storePassword = keystoreProps["storePassword"].toString()
+            keyAlias = keystoreProps["keyAlias"].toString()
+            keyPassword = keystoreProps["keyPassword"].toString()
+        }
+    }
     namespace = "com.andrespena.helloworldkt"
     compileSdk {
         version = release(36) {
